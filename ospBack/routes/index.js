@@ -22,7 +22,8 @@ router.post('/imageUpload', imageUploader('images/').single("image"), (req, res,
       res.status(500).json({ status: "error" });
     }
     else {
-      res.json({ status: "success" });
+      console.log(req.file.filename);
+      res.json({ status: "success", imgName: req.file.filename });
     }
   })
   //console.log(req.file.filename);
@@ -33,11 +34,10 @@ router.put('/imageModify', imageUploader('images/').single("image"), (req, res, 
 
   Images.findOneAndUpdate({
     noteID: req.body.noteID
-  }, { $set: { imgName: req.file.filename } })
-    .exec().then((image) => {
-      console.log(image.imgName);
-      res.json({ status: "success", imgName: image.imgName });
-    })
+  }, { $set: { imgName: req.file.filename } }, { new: true }).then((image) => {
+    console.log(image.imgName);
+    res.json({ status: "success", imgName: image.imgName });
+  })
     .catch(err => {
       console.log(err);
       res.status(500).json({ status: "error" })
